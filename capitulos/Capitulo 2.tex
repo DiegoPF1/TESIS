@@ -1,0 +1,402 @@
+\chapter{Modelo matemático}
+\section{Planta térmica}
+Desde el punto de vista termodinámico es conveniente pensar al APD como una red de nodos térmicos que se conectan mediante resistencias térmicas.\\
+Los componentes termicos de la planta del sistema esta constituidos principalmente por una celda Peltier, un termistor, un disipador de energía y el ambiente, el objetivo principal es bajar y estabilizar la temperatura del sistema en un rango efectivo de 0° a 10°C mediante la cara fría de la TEC y la dicipación del calor de la cara caliente hacia el ambiente. Esto aumenta la capacidad de respuesta de la región activa del APD.
+(colocar una imagen de la red de nodos)\\
+Se comienza por modelar la energia interna del sistema mediante la primera ley de la termodinámica 
+\begin{equation}
+    dU = {d}Q + {d}W
+\end{equation}
+el trabajo mecánico en el sistema es nulo, la energia interna del sistema esta solo en terminos del calor neto transferido 
+\begin{equation}
+     dU = {d}Q_{neto}
+\end{equation}
+en donde 
+\begin{equation}
+    Q_{neto} = Q_{in}-Q_{out}
+\end{equation}
+entonces la ecuación (2.3) puede escribirse como
+\begin{equation}
+    dU = dQ_{in}-dQ_{out}
+\end{equation}
+En el modelo $Q_{in}$ corresponde al flujo de calor suministrado por la TEC al sistema $Q_{TEC}$ y $Q_{out}$ corresponde al calor que disipa el sistema al ambiente $Q_{APD}$ por lo que se puede escribir 
+\begin{equation}
+    dU = dQ_{TEC}-dQ_{APD}
+\end{equation}
+se considero al tiempo t y a la temperatura T como las principales variables termodinámicas asociadas a la energia interna del sistema 
+\begin{equation}
+    U = U(T,t)
+\end{equation}
+se toma la derivada total en términos de un parámetro s 
+\begin{equation}
+    dU(T,t) = (\frac{\partial U}{\partial T})_{t} \frac{dT}{ds} + (\frac{\partial U}{\partial t})_{T}\frac{dt}{ds}
+\end{equation}
+como se estabilizara la temperatura podemos anular las variaciones de la misma 
+\begin{equation}
+    dU = (\frac{\partial U}{\partial t})_{T}\frac{dt}{ds}
+\end{equation}
+Para el calor se considero a la distancia x y el tiempo t como las principales variables termodinámicas 
+\begin{equation}
+    Q = Q(x,t)
+\end{equation}
+se relaciona al calor con la temperatura mediante la capacidad térmica del sistema C
+\begin{equation}
+    Q(x,t)=CdT(x,t)
+\end{equation}
+se toma la derivada total respecto al parametro s 
+\begin{equation}
+    dT(x,t) = C(\frac{\partial T}{\partial x})_{t}\frac{dx}{ds} + C(\frac{\partial T}{\partial t})_{x}\frac{dt}{ds}
+\end{equation}
+como las dimensiones del sistema no cambian, la variacion de la distancia es nula 
+\begin{equation}
+    dQ = C(\frac{\partial T}{\partial t})_{x}\frac{dt}{ds}
+\end{equation}
+sustituyendo (2.12) y (2.8) en (2.2) se consigue
+\begin{equation}
+     (\frac{\partial U}{\partial t})_{T}\frac{dt}{ds} =
+     C(\frac{\partial T}{\partial t})_{x}\frac{dt}{ds}
+\end{equation}
+esta igualdad puede escribirse en terminos de derivadas totales 
+\begin{equation}
+    \frac{dU}{dt} = C\frac{dT}{dt}
+\end{equation}
+combinando este resultado con (2.5) se consigue
+\begin{equation}
+    C\frac{dT(t)}{dt} = \frac{dQ_{TEC}}{dt}-\frac{dQ_{APD}}{dt}
+\end{equation}
+\begin{equation}
+    C\frac{dT(t)}{dt} = \dot{Q}_{TEC}-\dot{Q}_{APD}
+\end{equation}
+\subsection{Calor absorbido por la TEC}
+El calor absorbido por la cara fría de la TEC se modela mediante una función que depende de la temperatura de la cara caliente $T_{h}$, la cara temperatura de la cara fría $T_{c}$ y la corriente suministrada $I$
+\begin{equation}
+    \dot{Q}_{TEC}(T_{h}, T_{c}, I)= \alpha T_{c}I-\frac{1}{2}I^{2}R-K_{TEC}(T_h-T_c)
+\end{equation}
+se considera un punto $(T_0c, T_0h, I_0)$ cerca del (0,0,0) y se toma la serie de Taylor al rededor de el, cortando los términos a primer orden se tiene 
+\begin{equation}
+    \begin{split}
+    \dot{Q}_{TEC}(T_{c}(t), T_{h}(t),I(t))= \alpha T_{0c}I_{0} -\frac{1}{2}I_{0}^2R -K_{TEC}(T_{0h}-T_{0c}) +(\alpha I_{0}+K_{TEC})(T_{c}(t)-T_{0c})\\ 
+    -K_{TEC}(T_{h}(t)-T_{oh}) - (\alpha T_{0c}-I_{0}R)(I(t)-I_{0})
+    \end{split}
+\end{equation}
+esta ecuación se simplifica al considerar que $(T_{0c}, T_{oh},I_{0})$ esta cerca del cero. Se multiplica por $-1$ para indicar que el sistema esta enfriando 
+\begin{equation}
+     \dot{Q}_{TEC}(T_{c}(t), T_{h}(t),I(t))= -(\alpha I_{0} + K_{TEC} )\Delta T_{c}(t)+K_{TEC}\Delta T_{h}(t) - (\alpha T_{0c}-I_{0}R)\Delta I(t)
+\end{equation}
+
+la corriente se suministra solo al momento de encender la planta y la acción no es inmediata, así que lo más adecuado es modelar la inyección de corriente mediante una función $u(t)$ de Heavisade con un retardo L en el tiempo
+\begin{equation}
+\Delta  I(t-L)u(t-L) =
+\begin{cases}
+    \Delta I(t-L) & \text{si } t \geq L\\
+    0  & \text{si } t < L
+\end{cases}
+\end{equation}
+haciendo $\gamma =(\alpha I_{0} + K_{TEC} )$ y $b=(\alpha T_{0c}-I_{0}R)$ se consigue 
+\begin{equation}
+     \dot{Q}_{TEC}(T_{c}(t), T_{h}(t),I(t))= -\gamma \Delta T_{c}(t)+K_{TEC}\Delta T_{h}(t) - b\Delta I(t-L)u(t-L)
+\end{equation}
+\subsection{Intercambio de calor con el ambiente}
+Para modelar el intercambio de calor entre el sistema y el ambiente se emplea la ecuación de difusión de 
+\begin{equation}
+    \dot{Q}_{APD} = -k\nabla T
+\end{equation}
+al estar establecida una dirección para el  flujo de calor se puede escribir 
+\begin{equation}
+    \dot{Q}_{APD}(x,t)=-k\frac{\partial T(x,t)}{\partial x}
+\end{equation}
+Sea A el área del disipador de energía térmica, se define entonces el calor total emitido 
+\begin{equation}
+     \dot{Q}_{APD}(x,t)=-kA\frac{\partial T(x,t)}{\partial x}
+\end{equation}
+sea r la distancia entre la cara caliente de la TEC y el extremo exterior del disipador de energía, se puede escribir entonces 
+\begin{equation}
+    \dot{Q}_{APD}(x,t)=kA\frac{T(r,t)-T(0,t)}{r}
+\end{equation}
+haciendo que $T(r,t)=T_{amb}(t)$, $T(0,t)=T_{APD}(t)$ y $R_{term}=\frac{r}{kA}$ se puede escribir 
+\begin{equation}
+     \dot{Q}_{APD}(x,t)=-\frac{1}{R_{term}}(T_{amb}(t)-T_{APD}(t))
+\end{equation}
+sustituyendo (2.26) y (2.21) en (2.16) se consigue
+\begin{equation}
+    C\frac{dT(t)}{dt} =  - \gamma \Delta T_{c}(t)+K_{TEC}\Delta T_{h}(t) - b\Delta I(t-L)u(t-L) + \frac{1}{R_{term}}(T_{amb}(t)-T_{APD}(t))
+\end{equation}
+se busca poner todo en terminos de cambios y que  
+\begin{equation}
+    T(t)=T_{c}(t)=T_{APD}(t)
+\end{equation}
+para la retroalimentacion negativa se define 
+\begin{equation}
+    \Delta T_(t) = T(t)-T_{oc}
+\end{equation}
+tomando la derivada respecto al tiempo se tiene 
+\begin{equation}
+    \frac{d\Delta T(t)}{dt} = \frac{dT(t)}{dt}
+\end{equation}
+por otro lado, debido a que $T_{oc}= 0$ se puede escribir 
+\begin{equation}
+    \Delta T_{APD}(t) = T_{APD}(t)-T_{oc} = T_{APD}(t)
+\end{equation}
+aplicando esta misma idea a la temperatura ambiente se tiene 
+\begin{equation}
+    \Delta T_{amb}(t) = T_{amb}(t)-T_{oc} = T_{amb}(t)
+\end{equation}
+al aplicar esto y agrupar se consigue la ecuación diferencial de primer orden que modela a la planta térmica del APD como un sistema termodinámico de enfriamiento. 
+\begin{equation}
+    C\frac{d\Delta T(t)}{dt} = -a\Delta T(t) + K_{TEC}\Delta T_{h}(t) - b\Delta I(t-L)u(t-L)+ \frac{1}{R_{term}}\Delta T_{amb}(t)
+\end{equation}
+siendo $a = \gamma+\frac{1}{R_{term}}$
+\section{Funciones de transferencia}
+Para cualquier sistema cuya relación de entrada $E(t)$ y salida S(t) pueda modelarese mediante  ecuaciones diferenciales lineales se define su función de transferencia como 
+\begin{equation}
+    G(s) = \frac{\Lap{S(t)}}{\Lap{E(t)}} = \frac{S(s)}{E(s)}
+\end{equation}
+Se considera la definición de la transformada de Laplace:
+La transformada de Laplace es una herramienta matemática que toma una función en el tiempo y la convierte en otra función de variable compleja s.
+\begin{equation}
+    F(s)=\Lap {f(t)}=\int_{0}^{\infty}f(t)e^{-st}dt
+\end{equation}
+se aplica a la ecuación diferencial 
+\begin{equation}
+    \Lap{C\frac{d\Delta T(t)}{dt}} =\Lap{-a\Delta T (t) + K_{TEC}\Delta T_{h}(t) - b\Delta I(t-L)u(t-L)+ \frac{1 }{R_{term}}\Delta T_{amb}(t)}
+\end{equation}
+\begin{equation}
+    C\Lap{\frac{d\Delta T(t)}{dt}} = -a\Lap{\ \Delta T (t)} + K_{TEC}\Lap{\Delta T_{h(t)} - b\Lap{\Delta I(t-L)u(t-L)}+ \frac{1 }{R_{term}}\Lap{\Delta T_{amb}(t)}}
+\end{equation}
+\begin{equation}
+    C(s\Delta T(s)-\Delta T(0)) = -a\Delta T(s) + K_{TEC}\Delta T_{h}(s)-be^{-Ls}\Delta I(s) + \frac{1}{R_{term}}\Delta T_{amb}(s)
+\end{equation}
+considerando $\Delta T(0)=\Delta T_{amb}(s)$ y agrupando se consigue 
+\begin{equation}
+    (Cs+a)\Delta T(s) = K_{TEC}\Delta T_{h}(s)-be^{-Ls}\Delta I(s) + (C+\frac{1}{R_{term}})\Delta T_{amb}(s)
+\end{equation}
+naturalmente la temperatura del sistema no depende solo de la corriente suministrada, depende de la temperatura de la cara caliente de la TEC y la temperatura del ambiente. Se puden establecer tres funcione de transferencia a primer orden;
+\begin{itemize}
+    \item una para  la corriente suministrada $T_{h}(s) = T_{amb}(s) = 0$  
+    \begin{equation}
+        \frac{\Delta T(s)}{\Delta I(s)} = \frac{-be^{-Ls}}{Cs+a}
+    \end{equation}
+    \item una para la cara caliente de la TEC $I(s) = T_{amb} = 0$  
+    \begin{equation}
+        \frac{\Delta T(s)}{\Delta T_{h}(s)} = \frac{K_{TEC}}{Cs+a}
+    \end{equation}
+    \item y una para el ambiente $T_{h}(s) = I(s)=0$
+    \begin{equation}
+        \frac{\Delta T(s)}{\Delta T_{amb}(s)} = \frac{CR_{term}+1}{R_{term}(Cs+a)}
+    \end{equation}
+    \end{itemize}
+se emplea (2.32) para caracterizar  el enfriamiento del sistema a partir de la inyección de corriente, factorizando a se consigue 
+\begin{equation}
+     \frac{\Delta T(s)}{\Delta I(s)} = \frac{\frac{-b}{a}e^{-Ls}}{\frac{C}{a} s + 1}
+\end{equation}
+haciendo $K=\frac{b}{a} $ y $\tau=\frac{C}{a}$ se obtiene la forma  más común asociada a dicha función de transferencia de calor por suministro  de corriente  
+\begin{equation}
+      G(s)= \frac{-Ke^{-Ls}}{\tau s +1}
+\end{equation}
+se demuestra que $\tau$ tiene unidades de tiempo
+\begin{equation}
+    [\tau] = [\frac{C}{a}] = [\frac{C}{\gamma+\frac{1}{R_{term}}} ]
+\end{equation}
+la capacidad termica C tiene unidades de $\frac{J}{K}$, la resistencia térmica de $R_{term}$ tiene unidades de $\frac{K}{W}$ y $\gamma$ por su parte 
+\begin{equation}
+    [\gamma] = [\alpha I_{0} + K_{TEC}] = \frac{W}{K}
+\end{equation}
+se tiene  
+\begin{equation}
+    [\tau] = \frac{\frac{J}{K}}{\frac{W}{k}}=\frac{J}{W} = s
+\end{equation}
+\subsection{Conexión con el experimento}
+Para conectar el modelo matemático con el experimento se debe pensar en el efecto de un escalón de corriente 
+\begin{equation}
+    \Delta I(t-L)u(t-L)=\Delta I_{0}u(t-L)
+\end{equation} 
+cuya transformada de Lapace es 
+\begin{equation}
+    \Delta I(s)= \frac{\Delta I_{0}e^{-sL}}{s}
+\end{equation}
+sustituyendo en (2.36) y despejando T(s) se consigue  
+\begin{equation}
+    \Delta T(s) = \frac{\Delta I_{0}Ke^{-sL}}{s(\tau s +1)}
+\end{equation}
+se descomponen los dos factores del denominador mediante el metodo de fracciones parciales
+\begin{equation}
+    \Delta T(s) = e^{-sL}(\frac{\Delta I_{0}K}{s} - \frac{\tau \Delta I_{0}K}{\tau s +1})
+\end{equation}
+se aplica ahora la transformada inversa de Laplce para analizar la respuesta en el tiempo del sistema modelado 
+\begin{equation}
+   \Lap{ \Delta T(s) }= \Lap {e^{-sL}(\frac{\Delta I_{0}K}{s} - \frac{\tau \Delta I_{0}K}{\tau s +1})}
+\end{equation}
+\begin{equation}
+     \Lap{ \Delta T(s) } = \Delta I_{0}K \Lap{\frac{e^{-sL}}{S}} - \Delta I_{0}K \Lap{\frac{1}{s+\frac{1}{\tau}}}
+\end{equation}
+\begin{equation}
+    \Delta T(t) = \Delta I_{0}Ku(t-L)(1-e^{-\frac{t}{\tau}})
+\end{equation}
+ Para $t \geq L$ se tiene 
+ \begin{equation}
+    \Delta T(t) = \Delta I_{0}K(1-e^{-\frac{t}{\tau}})
+\end{equation}
+cuand $t \xrightarrow{}\infty$ el sistema llega a la temperatura de equilibrio 
+\begin{equation}
+    \Delta T_{ss} =\Delta I_{0}K
+\end{equation}
+la ecuación (2.44) nos permite relacionar las variaciones de la temperatura del sistema con la variaciones de la   escalon de corriente suministrado.
+\begin{equation}
+    \Delta T(t) =\Delta I_{0}K(1-e^{-\frac{t}{\tau}})
+\end{equation}
+cuando $t \xrightarrow{}\infty$ el sistema tiende al equilibrio, en ese entonces 
+\begin{equation}
+     \Delta T_{ss}(t) =\Delta I_{0}K
+\end{equation}
+se define entonces la ganancia termica del sistema K en términos del cambio total de temperatura del sistema respecto al cambio total de corriente suministrada 
+\begin{equation}
+    K = \frac{\Delta T(t)}{\Delta I_{0}}=\frac{\Delta T_{ss}}{\Delta I_{0}}
+\end{equation}
+considerando ahora el cociente entre (2.44) y (2.45) se tiene 
+\begin{equation}
+    \frac{\Delta T(t)}{\Delta T_{ss}}=1-e^{-\frac{t}{\tau}}
+\end{equation}
+haciendo $t=\tau$ y considerando una pequeñua variación  
+\begin{equation}
+     \frac{\Delta T(\tau)}{\Delta T_{ss}}=1-e^{-1}=0.632121
+\end{equation}
+
+un cambio en la temperatura puede escribirse como 
+\begin{equation}
+    \Delta T(t)= T(t)-T_{amb}
+\end{equation}
+de modo tal que 
+\begin{equation}
+    T(\tau)= \Delta T(\tau)+ T_{amb}(\tau)
+\end{equation}
+se puede escribir entonces 
+\begin{equation}
+    T(\tau)= T_{amb}(\tau) + 0.632\Delta T_{ss}(\tau) 
+\end{equation}
+considerando que 
+\begin{equation}
+    \Delta T_{ss}(\tau)= T_{ss}(\tau) - T_{amb}(\tau)
+\end{equation}
+se obtiene 
+\begin{equation}
+     T(\tau)= T_{amb}(\tau) + 0.632( T_{ss}(\tau) - T_{amb}(\tau))
+\end{equation}
+en el experimento la constante de tiempo termica efectiva del sistema $\tau$ se determina al localizar el valor calculado de $T(\tau)$ en la curva de enfriamiento.
+\subsection{Control proporcional integral}
+Se empleó un control proporcional integral, un algoritmo de retroalimentación para regular la temperatura.
+Enfriar el sistema implica una retroalimentación negativa, se define entonces el error como el calculo continuo de la diferencia entre el valor real y el valor deseado 
+\begin{equation}
+    e(t)= T(t)-T_{obj}(t)
+\end{equation}
+el termino proporcional se define como  
+\begin{equation}
+    p(t) = K_{p}e(t)
+\end{equation}
+la parte integral se encarga de sumar todos los errores que han ocurrido a lo largo del tiempo 
+\begin{equation}
+    Int(t) = \int_{o}^{t}e(\tau)d\tau
+\end{equation}
+la señal de control se define como la suma de las partes proporcional e integral, y en este caso corresponde a la corriente suministrada al sistema a lo largo  del tiempo  
+\begin{equation}
+    \Delta I(t) = P(t) + Int(t)
+\end{equation}
+\begin{equation}
+   \Delta I(t) =  K_{p}e(t) + K_{I}\int_{o}^{t}e(\tau)d\tau
+\end{equation}
+se toma la transformada de Lapalce 
+\begin{equation}
+     \Lap{C(t)} =  \Lap{K_{p}e(t)} + \Lap{K_{I}\int_{o}^{t}e(\tau)d\tau}
+\end{equation}
+\begin{equation}
+    \Delta I(s)= K_{p}e(s) + K_{I}\frac{e(s)}{s}
+\end{equation}
+\begin{equation}
+    \Delta I(s) = e(s)(K_{p} + \frac{K_{I}}{s})
+\end{equation}
+se define entonces la  función de transferencia para control de corriente  
+\begin{equation}
+    C(s) = \frac{\Delta I(s)}{e(s)} = (K_{p} + \frac{K_{I}}{s})
+\end{equation}
+multiplicar (2.44) por (2.72) permite encontrar una función de transferencia para el control de la temperatura 
+\begin{equation}
+    C(s)G(s)= \frac{\Delta I(s)}{e(s)}\frac{\Delta T(s)}{\Delta I(s)} = \frac{\Delta T(s)}{e(s)} = (K_{p} + \frac{K_{I}}{s})\frac{-Ke^{-Ls}}{\tau s +1}
+\end{equation}
+se puede escribir entonces 
+\begin{equation}
+    C(s)G(s) = K_{p}(1+\frac{K_{I}}{K_{p}s})\frac{-Ke^{-Ls}}{\tau s +1}
+\end{equation}
+se consideran las unidades del cosiente $\frac{K_{I}}{K_{p}}$
+\begin{equation}
+    [\frac{K_{p}}{K_{I}}] = \frac{\frac{A}{C°}}{\frac{A}{C°s}} = s
+\end{equation}
+se define entonces este cociente en terminos de un timepo integral $t_{I}$
+\begin{equation}
+    t_{I} = \frac{K_{p}}{K_{I}}
+\end{equation}
+y se puede escribir 
+\begin{equation}
+    C(s)G(s)= K_{p}(1+\frac{1}{t_{I}s})\frac{-Ke^{-Ls}}{\tau s +1}
+\end{equation}
+\begin{equation}
+ C(s)G(s)= K_{p}(\frac{t_{I}s+1}{t_{I}s})\frac{-Ke^{-Ls}}{\tau s +1}
+\end{equation}
+
+como $\tau$ tiene unidades de siempo se toma entonces
+\begin{equation}
+     \tau = t_{I}
+\end{equation}
+y (2.78) se simplifica 
+\begin{equation}
+    C(s)G(s) = \frac{-K_{p}Ke^{-Ls}}{\tau s}
+\end{equation}
+para un retardo de tiempo  muy pequeño se puede escribir la magnitud efectiva del lazo cerrado como
+\begin{equation}
+     C(s)G(s) = \frac{K_{p}|K|}{\tau s}
+\end{equation}
+\subsection{Cierre del lazo de realimentación negativa}
+se conideran tres señales la de referencia r(s), el error e(s) y la salida  y(s), para una realimentacion negativa se define 
+\begin{equation}
+    e(s) = r(s) - y(s)
+\end{equation}
+de la ecuacion (2.76) se puede obtener una expresion para la salida del controlador 
+\begin{equation}
+    C(s)G(s)  = \frac{\Delta T(s)}{e(s)}
+\end{equation}
+haciendo $y(s) = \Delta T(s)$ se consigue 
+\begin{equation}
+    y(s)= C(s)G(s)e(s)
+\end{equation}
+se introduce la expresión para el error, es decir 
+\begin{equation}
+    y(s) = C(s)G(s)(r(s)-y(s))
+\end{equation}
+haciendo $C(s)G(s) = L(s)$ se puede escribir
+\begin{equation}
+    y(s) = L(s)r(s) - L(s)y(s)
+\end{equation}
+\begin{equation}
+    \frac{y(s)}{r(s)} = \frac{L(s)}{1+L(s)}
+\end{equation}
+se obtiene entonces la respuesta de lazo cerrado H(s)
+\begin{equation}
+    H(s) = \frac{y(s)}{r(s)} = \frac{\frac{K_{p}|K|}{\tau s}}{1+\frac{K_{p}|K|}{\tau s}}
+\end{equation}
+se lleva esta expresion a una que tenga forma de un istema de primer orden 
+\begin{equation}
+    H(s) = \frac{K_{p}|K|}{\tau s + K_{p}|K|}
+\end{equation}
+\begin{equation}
+    H(s) = \frac{1}{\frac{\tau}{K_{p}|K|}s + 1}
+\end{equation}
+  se toma 
+  \begin{equation}
+    \lambda = \frac{\tau}{K_{p}|K|}
+  \end{equation}
+   se puede escribir entonces 
+   \begin{equation}
+    H(s) = \frac{1}{\lambda s + 1}
+   \end{equation}
+   $\lambda$ es una constante que se adecua para mediar la agresividad de la respuesta de control.
+   Las ecuaciones (2.79) , (2.82) y (2.94) constutuyen el puente que relaciona a las constantes del control proporcional con la caractezicacion del sistema termico.
+   Este metodo se conoce como control por modelo interno, si se conoce el modelo de una planta, se puede construiir el controlador usando explicitamente ese modelo y elejir mediante la constante $\lambda$ que tan agresiva se quiere la respuesta. 
+   
